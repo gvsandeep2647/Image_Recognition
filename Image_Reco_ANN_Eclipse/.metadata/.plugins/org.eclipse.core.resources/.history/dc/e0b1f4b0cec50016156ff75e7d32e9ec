@@ -1,0 +1,41 @@
+package artificialneuralnetworks;
+
+public class PoseRecognizer {
+	/** Number of predictions we got right*/
+	int correct = 0;
+	/** Number of predictions we got wrong*/
+	int wrong = 0;
+	/** Our prediction */
+	int prediction = 0;
+
+	/**
+	 * @param prediction The value which we predicted
+	 * @param filename we will see whether according to the filename we are correct or not
+	 * prediction 1 = straight 2 = right 3 = left 4 = down
+	 */
+	public void updateResults(int prediction,String filename){
+		if(prediction == 1)
+		{
+			if(filename.contains("straight"))
+				correct++;
+			else
+				wrong++;
+		}else if(prediction == 2){
+			if(filename.contains("right"))
+				correct++;
+			else
+				wrong++;
+		}else if(prediction == 3){
+			if(filename.contains("left"))
+				correct++;
+			else
+				wrong++;
+		}
+		else{
+			if(filename.contains("up"))
+				correct++;
+			else
+				wrong++;
+		}
+	}
+}

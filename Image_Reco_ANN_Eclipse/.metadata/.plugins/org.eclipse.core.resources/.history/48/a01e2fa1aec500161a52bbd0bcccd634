@@ -1,0 +1,113 @@
+package artificialneuralnetworks;
+import java.io.*;
+
+/**
+ * @author sandeep,snehal
+ * AIM : To apply neural network learning to the problem of face recognition. To build a sunglasses recognizer, a face recognizer, and a pose recognizer.
+ */
+public class ANN {
+	/** Stores the normalized pixel values for the current image */
+	static double image[][];
+
+	/** Class instantiation for handling PGM Images*/
+	static PGMReader pgm = new PGMReader();
+
+	public static void main(String[] args) {
+		/* Everything related to Sunglasses Predictor */
+
+		long startTime = System.currentTimeMillis();
+		try{
+			imageHandler("straightrnd_train.list",1);
+		}
+		catch(Exception e){
+			System.err.println(e);
+		}
+		long endTime = System.currentTimeMillis();
+		long elapsedTime = endTime - startTime;
+		System.out.println();
+		System.out.println("Time taken for learning and predicting whether the user has worn sunglasses : " + (double)elapsedTime/1000 + " seconds");
+		System.out.println("*******************"); 
+
+
+
+		/* Everything related to Face Recognizer */
+		startTime = System.currentTimeMillis();
+		try{
+			imageHandler("straighteven_train.list",2);
+		}
+		catch(Exception e){
+			System.err.println(e);
+		}
+		endTime = System.currentTimeMillis();
+		elapsedTime = endTime - startTime;
+		System.out.println();
+		System.out.println("Time taken for learning and predicting the person's name : " + (double)elapsedTime/1000 + " seconds");
+		System.out.println("*******************"); 
+
+
+
+
+		/* Everything related to Pose Recognizer */
+		startTime = System.currentTimeMillis();
+		try{
+			imageHandler("all_train.list",3);
+		}
+		catch(Exception e){
+			System.err.println(e);
+		}
+		endTime = System.currentTimeMillis();
+		elapsedTime = endTime - startTime;
+		System.out.println();
+		System.out.println("Time taken for learning and predicting whether the pose : " + (double)elapsedTime/1000 + " seconds");
+		System.out.println("*******************"); 
+	}
+
+	/**
+	 * @param filename : The filename which contains a list of image locations from which we will read the images
+	 * @param mode : 1 = Sun glasses predictor 2 = Face Recognizer 3 = Pose Recognizer
+	 * @throws IOException
+	 */
+	public static void imageHandler(String filename,int mode) throws IOException{
+		BufferedReader br = new BufferedReader(new FileReader(filename));
+		String line=null;
+		SunGlasses sg = new SunGlasses();
+		FaceRecognizer fr = new FaceRecognizer();
+		PoseRecognizer pr = new PoseRecognizer();
+		while((line=br.readLine()) != null) {
+			image = pgm.readImage(line);
+			switch (mode) {
+			case 1:
+
+				break;
+			case 2:
+
+				break;
+			case 3:
+
+				break;
+			}
+		}
+
+		br.close();
+	}
+
+	public void calcAccuracy(int correct,int wrong,int mode){
+		double accuracy = ((double)correct/(wrong+correct))*100;
+		accuracy = Math.round(accuracy*100) / 100.0;
+		String strMode="";
+		switch (mode) {
+		case 1:
+			strMode = "Sunglasses Predictor";
+			break;
+		case 2:
+			strMode = "Face Recognizer";
+			break;
+		case 3:
+			strMode = "Pose Recognizer";
+			break;
+		}
+
+		System.out.println("Accuracy of the" + strMode + " is : " + accuracy +"%");
+		System.out.println("It has correctly classified "+ correct + " instances out of "+ (wrong+correct) +" instances" );
+	}
+}

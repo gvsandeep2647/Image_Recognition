@@ -1,0 +1,30 @@
+package artificialneuralnetworks;
+
+public class SunGlasses {
+	int correct = 0;
+	int wrong = 0;
+	int prediction = 0;
+	
+	public void updateResults(int prediction,String filename){
+		if(prediction == 1)
+		{
+			if(filename.contains("sunglasses"))
+				correct++;
+			else
+				wrong++;
+		}
+		else{
+			if(filename.contains("open"))
+				correct++;
+			else
+				wrong++;
+		}
+	}
+	
+	public void calcAccuracy(){
+		accuracy = ((double)/(wrong+correct))*100;
+  		accuracy = Math.round(accuracy*100) / 100.0;
+  		System.out.println("Accuracy of the ID3 is : " + accuracy+"%");
+System.out.println("It has correctly classified "+correct+" instances out of "+(wrong+correct)+" instances" );
+	}
+}

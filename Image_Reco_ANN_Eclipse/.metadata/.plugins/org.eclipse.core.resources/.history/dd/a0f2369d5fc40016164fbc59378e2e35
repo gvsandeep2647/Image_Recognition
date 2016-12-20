@@ -1,0 +1,17 @@
+package artificialneuralnetworks;
+
+public class SunGlasses {
+	int correct = 0;
+	int wrong = 0;
+	int prediction = 0;
+	public SunGlasses(String filename) {
+		
+	}
+	
+	public void calcAccuracy(int prediction){
+		if(prediction == 1)
+		{
+			
+		}
+	}
+}

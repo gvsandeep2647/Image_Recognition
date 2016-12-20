@@ -1,0 +1,244 @@
+package artificialneuralnetworks;
+import java.io.*;
+import java.util.HashMap;
+
+
+/**
+ * @author Sandeep,Snehal
+ * AIM : To apply neural network learning to the problem of face recognition. To build a sunglasses recognizer, a face recognizer, and a pose recognizer.
+ */
+public class ANN {
+	/** Stores the normalized pixel values for the current image */
+	static double image[][];
+
+	/** Class instantiation for handling PGM Images*/
+	static PGMReader pgm = new PGMReader();
+
+	/** A HashMap which gives an unique ID*/
+	static HashMap<Integer,String> faceID = new HashMap<>();
+
+	/** A HashMap which gives every direction an unique number*/
+	static HashMap<Integer, String> directionID = new HashMap<>();
+
+
+	public static void main(String[] args) {
+		initializeHashMaps();
+		/* Everything related to Sunglasses Predictor */
+
+		long startTime = System.currentTimeMillis();
+		try{
+			Network sunGlasses = new Network(960,4,1,0.3,0.3);
+			imageHandler("straightrnd_train.list",sunGlasses,1);
+			Validation v1 = new Validation();
+			handlingTestData("straightrnd_test1.list",sunGlasses,1, v1);
+			Validation v2 = new Validation();
+			handlingTestData("straightrnd_test2.list",sunGlasses,1, v2);
+		}
+		catch(Exception e){
+			System.err.println(e);
+		}
+		long endTime = System.currentTimeMillis();
+		long elapsedTime = endTime - startTime;
+		System.out.println();
+		System.out.println("Time taken for learning and predicting whether the user has worn sunglasses : " + (double)elapsedTime/1000 + " seconds");
+		System.out.println("*******************"); 
+
+		
+		/* Everything related to Face Recognizer */
+		startTime = System.currentTimeMillis();
+		try{
+			Network faceRecognizer = new Network(960,20,20,0.3,0.3);
+			imageHandler("straighteven_train.list",faceRecognizer,2);
+			Validation v3 = new Validation();
+			handlingTestData("straightrnd_test1.list",faceRecognizer,2,v3);
+			Validation v4 = new Validation();
+			handlingTestData("straightrnd_test2.list",faceRecognizer,2,v4);
+		}
+		catch(Exception e){
+			System.err.println(e);
+		}
+		endTime = System.currentTimeMillis();
+		elapsedTime = endTime - startTime;
+		System.out.println();
+		System.out.println("Time taken for learning and predicting the person's name : " + (double)elapsedTime/1000 + " seconds");
+		System.out.println("*******************"); 
+
+
+		/* Everything related to Pose Recognizer */
+		startTime = System.currentTimeMillis();
+		try{
+			Network poseRecognizer = new Network(960,6,4,0.3,0.3);
+			imageHandler("all_train.list",poseRecognizer,3);
+			Validation v1 = new Validation();
+			handlingTestData("straightrnd_test1.list",sunGlasses,1, v1);
+			Validation v2 = new Validation();
+			handlingTestData("straightrnd_test2.list",sunGlasses,1, v2);
+		}
+		catch(Exception e){
+			System.err.println(e);
+		}
+		endTime = System.currentTimeMillis();
+		elapsedTime = endTime - startTime;
+		System.out.println();
+		System.out.println("Time taken for learning and predicting the person's pose : " + (double)elapsedTime/1000 + " seconds");
+		System.out.println("*******************");
+		
+	}
+
+
+	/**
+	 * @param filename : The filename which contains a list of image locations from which we will read the images
+	 * @param mode : 1 = Sun glasses predictor 2 = Face Recognizer 3 = Pose Recognizer
+	 * @param net : The network on which we are currently working
+	 * @throws IOException
+	 */
+	
+	public static void imageHandler(String filename,Network net,int mode) throws IOException{		
+
+		for(int i=0;i<200;i++)
+		{
+			BufferedReader br = new BufferedReader(new FileReader(filename));
+			String line = null;
+
+			while((line=br.readLine()) != null) {
+				image = pgm.readImage(line);
+				double input[] = linearize(image);
+				double targetVector[] = genTargetVector(line,mode);
+				net.updateWeights(input,targetVector);
+			}
+			br.close();
+		}
+	}
+
+	
+	public static void handlingTestData (String filename,Network net,int mode,Validation validation) throws IOException{
+		BufferedReader br = new BufferedReader(new FileReader(filename));
+		String line = null;
+		
+		while((line = br.readLine())!=null){
+			image = pgm.readImage(line);
+			double input[] = linearize(image);
+			validation.updateResults(net.getPrediction(input,mode),line, mode);
+		 }
+	}
+
+	/**
+	 * @param line : file path of the image whose target vector we want to create
+	 * @param mode : 1. Sunglasses 2. Face Recognizer 3. Pose Recognizer
+	 * @return the target vector
+	 */
+	
+	public static double[] genTargetVector(String line,int mode){
+		double target[] = new double[1];
+		switch(mode){
+		case 1:
+			target = new double[1];
+			if(line.contains("sunglasses"))
+				target[0] = 0.9;
+			else
+				target[0] = 0.1;
+			break;
+		case 2:
+			target = new double[20];
+			for(int i=0;i<faceID.size();i++)
+			{
+				if(line.contains(faceID.get(i)))
+					target[i] = 0.9;
+				else
+					target[i] = 0.1;
+			}
+			break;
+		case 3:
+			target = new double[4];
+			for(int i=0;i<directionID.size();i++)
+			{
+				if(line.contains(directionID.get(i)))
+					target[i] = 0.9;
+				else
+					target[i] = 0.1;
+			}
+			break;
+		}
+		return target;
+	}
+
+
+	/**
+	 * @param image : the 2D array which we want to convert to 1D array
+	 * @return 1D array of the image
+	 */
+
+	public static double[] linearize(double[][] image){
+		double temp[] = new double[image.length * (image[0].length)];
+		int k = 0;
+		for(int i = 0;i<image.length;i++)
+		{
+			for(int j = 0;j<image[i].length;j++)
+			{
+				temp[k] = image[i][j];
+				k++;
+			}
+		}
+		return temp;
+	}
+
+
+	/**
+	 * @param correct : No of correct predictions
+	 * @param wrong : No of wrong predictions
+	 * @param mode : 1. Sunglasses 2. Face Recognizer 3. Pose Recognizer
+	 */
+
+	public static void calcAccuracy(int correct,int wrong,int mode){
+		double accuracy = ((double)correct/(wrong+correct))*100;
+		accuracy = Math.round(accuracy*100) / 100.0;
+		String strMode="";
+		switch (mode) {
+		case 1:
+			strMode = "Sunglasses Predictor";
+			break;
+		case 2:
+			strMode = "Face Recognizer";
+			break;
+		case 3:
+			strMode = "Pose Recognizer";
+			break;
+		}
+
+		System.out.println("Accuracy of the" + strMode + " is : " + accuracy +"%");
+		System.out.println("It has correctly classified "+ correct + " instances out of "+ (wrong+correct) +" instances" );
+	}
+	
+
+	/**
+	 * A function to populate the HashMaps 
+	 */
+	
+	public static void initializeHashMaps(){
+		directionID.put(0,"straight");
+		directionID.put(1,"right");
+		directionID.put(2,"left");
+		directionID.put(3,"up");
+
+		faceID.put(0,"an2i");
+		faceID.put(1,"at33");
+		faceID.put(2,"boland");
+		faceID.put(3,"bpm");
+		faceID.put(4,"ch4f");
+		faceID.put(5,"cheyer");
+		faceID.put(6,"choon");
+		faceID.put(7,"danieln");
+		faceID.put(8,"glcikman");
+		faceID.put(9,"karyadi");
+		faceID.put(10,"kawamura");
+		faceID.put(11,"kk49");
+		faceID.put(12,"megak");
+		faceID.put(13,"mitchell");
+		faceID.put(14,"night");
+		faceID.put(15,"phoebe");
+		faceID.put(16,"saavik");
+		faceID.put(17,"steffi");
+		faceID.put(18,"sz24");
+		faceID.put(19,"tammo");
+	}
+}

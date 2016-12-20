@@ -1,0 +1,8 @@
+package artificialneuralnetworks;
+
+public class SunGlasses {
+	int correct = 0;
+	int wrong = 0;
+	
+	public void calcAccuracy();
+}

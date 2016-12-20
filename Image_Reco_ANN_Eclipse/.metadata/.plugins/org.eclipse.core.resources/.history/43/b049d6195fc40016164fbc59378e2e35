@@ -1,0 +1,6 @@
+package artificialneuralnetworks;
+
+public class SunGlasses {
+	int correct = 0;
+	
+}

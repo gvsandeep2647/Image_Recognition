@@ -1,0 +1,44 @@
+package artificialneuralnetworks;
+
+import java.io.*;
+import java.util.*;
+
+
+public class PGMReader {
+	double[][] readImage(String filename) throws IOException {
+		BufferedReader br = new BufferedReader(new FileReader(filename));
+		String magic = br.readLine();
+		String size = br.readLine();
+		while(size.startsWith("#")){
+			size = br.readLine();
+		}
+		Scanner s = new Scanner(size);
+		int columns = s.nextInt();
+		int rows = s.nextInt();
+		s.close();
+		String line = br.readLine();
+		s = new Scanner(line);
+		s.nextInt(); //Reading out the max
+		double image[][] = new double[rows][columns];
+		if("P5".equals(magic)){
+			FileInputStream img = new FileInputStream(filename);
+			File forLength = new File(filename);
+			long length = forLength.length();
+			long skip = length - rows*columns;
+			img.skip(skip);
+			for(int i=0;i<rows;i++){
+				for(int j=0;j<columns;j++){
+					image[i][j] = (int)img.read()/255.0;
+				}
+			}
+			img.close();
+		}
+		else{
+			//include P2 ? (checked 2 images, they're P5)
+		}
+		s.close();
+		br.close();
+		
+		return image;
+	}
+}

@@ -1,0 +1,239 @@
+package artificialneuralnetworks;
+
+import java.util.HashMap;
+
+/**
+ * An exception which would be raised if the two vectors whose do predict we are supposed to calculate are not of the same length 
+ */
+class IncompatibleLengthException extends Exception{
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * @param s : the error message to be displayed
+	 */
+	IncompatibleLengthException(String s) {
+		super(s);
+	}
+}
+
+/**
+ * The Artificial Neural Network which will be dynamically created as per user's request
+ */
+
+public class Network {
+	int inputs;
+	int hidden;
+	int outputs;
+	double eta;
+	double momentum;
+	double hiddenWeights[][];
+	double outputWeights[][];
+	double deltaK[];
+	double deltaH[];
+	HashMap<int[], Double> forMomentum = new HashMap<>();
+
+	/**
+	 * @param inputs : No. of inputs to the network 
+	 * @param hidden : No. of hidden layers in the network
+	 * @param outputs : No. of output layers in the network
+	 * @param eta : Learning rate of the network
+	 * @param momentum : Momentum of the network
+	 */
+
+	Network(int inputs, int hidden, int outputs, double eta, double momentum){
+		this.inputs = inputs;
+		this.hidden = hidden;
+		this.outputs = outputs;
+		this.eta = eta;
+		this.momentum = momentum;
+
+		hiddenWeights = new double[hidden][inputs];
+		outputWeights = new double[outputs][hidden];
+		deltaK = new double[outputs];
+		deltaH = new double[hidden];
+
+		/* Initialize weight vectors with small random weights */
+		for(int i = 0;i<hidden;i++){
+			for(int j=0;j<inputs;j++){
+				hiddenWeights[i][j] = Math.random()*0.1 - 0.05;
+			}
+		}
+
+		for(int i = 0;i<outputs;i++){
+			for(int j = 0;j<hidden;j++){
+				outputWeights[i][j] = Math.random()*0.1 - 0.05;
+			}
+		}
+	}
+
+
+
+	/**
+	 *@param input : The input vector
+	 * @param target : The target output vector
+	 * @param exampleNo : The example identity which we are dealing with
+	 */
+	void updateWeights(double input[], double target[],int exampleNo){
+		double op[] = networkHiddenOutput(input, 0);
+		double hop[] = networkHiddenOutput(input, 1);
+		for(int k=0;k<outputs;k++){
+			deltaK[k] = op[k]*(1-op[k])*(target[k]-op[k]);
+		}
+		for(int h = 0;h<hidden;h++){
+			for(int k =0;k<outputs;k++){
+				deltaH[h] += outputWeights[k][h]*deltaK[k];
+			}
+			deltaH[h] = deltaH[h]*hop[h]*(1-hop[h]);
+		}
+
+		for(int i=0;i<outputs;i++){
+			for(int j=0;j<hidden;j++){
+				int temp[] = new int[4];
+				temp[0] = 1; // 1 for output layer weight
+				temp[1] = exampleNo;
+				temp[2] = i;
+				temp[3] = j;
+				if(forMomentum.get(temp) == null)
+					outputWeights[i][j] += eta*hop[j]*deltaK[i];
+				else
+					outputWeights[i][j] += eta*(hop[j]*deltaK[i] + momentum * forMomentum.get(temp));
+				forMomentum.put(temp,outputWeights[i][j]);
+			}
+		}
+
+		for(int i=0;i<hidden;i++){
+			for(int j=0;j<inputs;j++){
+//				int temp[] = new int[4];
+//				temp[0] = 2; // 2 for hidden layer weight 
+//				temp[1] = exampleNo;
+//				temp[2] = i;
+//				temp[3] = j;
+//				if(forMomentum.get(temp)==null)
+					hiddenWeights[i][j] += eta*input[j]*deltaH[i];
+//				else
+//					hiddenWeights[i][j] += eta*(input[j]*deltaH[i]+momentum*forMomentum.get(temp));
+//				forMomentum.put(temp,hiddenWeights[i][j]);
+			}
+		}
+	}
+
+	/**
+	 * @param input : The input vector
+	 * @param flag : Indicates what to return. flag = 0 returns the output of the network, flag = 1 returns the
+	 * 					output of the hidden layer
+	 * @return : Network output vector or output of the hidden layer 
+	 */
+
+	double[] networkHiddenOutput(double input[], int flag){
+		double[] output = new double[outputs];
+		double[] hiddenOp = new double[hidden];
+
+		for(int i = 0; i<hidden;i++){
+			try{
+				hiddenOp[i] = sigmoidOutput(dot(hiddenWeights[i], input));
+			}catch(Exception e){
+				System.err.println("Error in hiddenop["+i+"]");
+			}
+		}
+
+		for(int i = 0; i<outputs; i++){
+			try{
+				output[i] = sigmoidOutput(dot(outputWeights[i], hiddenOp));
+			}catch(Exception e){
+				System.err.println("Error in output["+i+"]");
+			}
+		}
+		if(flag == 0)
+			return output;
+		else
+			return hiddenOp;
+	}
+
+	/**
+	 * @param z : Input on which sigmoid function is to be applied
+	 * @return : Output after applying sigmoid function on the input
+	 */
+
+	double sigmoidOutput(double z){
+		double sig;
+		sig = 1/(1+Math.exp(-1*z));
+		return sig;
+	}
+
+
+
+	/**
+	 * @param weight : Weight vector
+	 * @param input : input vector
+	 * @return : dot product of the vector
+	 * @throws IncompatibleLengthException
+	 */
+	double dot(double weight[], double input[])throws IncompatibleLengthException{
+		double result=0.0;
+
+		if(weight.length != input.length){
+			throw new IncompatibleLengthException("Lengths are not same");
+		}
+		else{
+			for(int i=0;i<weight.length;i++){
+				result += weight[i]*input[i];
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * @param input : The image of which we are trying to predict an attribute
+	 * @param mode 
+	 * @return : our prediction
+	 */
+
+	int getPrediction(double input[],int mode){
+		double[] hidden_temp = new double[hidden];
+		double[] output_temp = new double[outputs];
+		for(int i=0;i<hidden;i++)
+		{
+			try{
+				hidden_temp[i] = dot(input,hiddenWeights[i]);
+			}catch(Exception e){
+				System.err.println("Error in calculating hidden_temp["+i+"]");
+			}
+		}
+		for(int i=0;i<outputs;i++)
+		{
+			try{
+				output_temp[i] = dot(hidden_temp,outputWeights[i]);
+			}catch(Exception e){
+				System.err.println("Error in calculating output_temp["+i+"]");
+			}
+		}
+
+		if(mode == 1)
+		{
+			if(output_temp[0]>0)
+				return 1;
+			else
+				return 0;
+		}else{
+			return getMaxIndex(output_temp);
+		}
+	}
+
+	/**
+	 * @param array
+	 * @return An utility function which returns the index of the maximal element in the array
+	 */
+	int getMaxIndex(double array[]){
+		double max = -Double.MAX_VALUE;
+		int index = 0;
+		for(int i=0;i<array.length;i++)
+		{
+			if(array[i]>max)
+			{
+				max = array[i];
+				index = i;
+			}
+		}
+		return index;
+	}
+}

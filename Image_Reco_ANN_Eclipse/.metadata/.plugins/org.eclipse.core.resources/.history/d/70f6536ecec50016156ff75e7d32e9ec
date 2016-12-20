@@ -1,0 +1,27 @@
+package artificialneuralnetworks;
+
+public class Validation {
+	/** Number of predictions we got right*/
+	int correct = 0;
+	/** Number of predictions we got wrong*/
+	int wrong = 0;
+	/** Our prediction */
+	int prediction = 0;
+	
+	public void updateResults(int prediction,String filename,int mode){
+		if(prediction == 1)
+		{
+			if(filename.contains("sunglasses"))
+				correct++;
+			else
+				wrong++;
+		}
+		else{
+			if(filename.contains("open"))
+				correct++;
+			else
+				wrong++;
+		}
+	}
+
+}

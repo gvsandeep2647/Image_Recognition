@@ -1,0 +1,19 @@
+package artificialneuralnetworks;
+
+public class FaceRecognizer {
+	int correct = 0;
+	int wrong = 0;
+	int prediction = 0;
+
+	
+	public void updateResults(int prediction,String filename){
+		switch (prediction) {
+		case value:
+			
+			break;
+
+		default:
+			break;
+		}
+	}
+}

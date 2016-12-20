@@ -1,0 +1,186 @@
+package artificialneuralnetworks;
+
+public class Validation {
+	/** Number of predictions we got right*/
+	int correct = 0;
+	/** Number of predictions we got wrong*/
+	int wrong = 0;
+	/** Our prediction */
+	int prediction = 0;
+	
+	/**
+	 * @param prediction : Our prediction
+	 * @param filename : The image on which we are predicting
+	 * @param mode
+	 */
+	public void updateResults(int prediction,String filename,int mode){
+		switch (mode){
+		case 1:
+			if(prediction == 1)
+			{
+				if(filename.contains("sunglasses"))
+					correct++;
+				else
+					wrong++;
+			}
+			else{
+				if(filename.contains("open"))
+					correct++;
+				else
+					wrong++;
+			}
+			break;
+		case 2:
+			switch (prediction) {
+			case 1:
+				if(filename.contains("an2i"))
+					correct++;
+				else
+					wrong++;
+				break;
+			case 2:
+				if(filename.contains("at33"))
+					correct++;
+				else
+					wrong++;
+				break;
+			case 3:
+				if(filename.contains("boland"))
+					correct++;
+				else
+					wrong++;
+				break;
+			case 4:
+				if(filename.contains("bpm"))
+					correct++;
+				else
+					wrong++;
+				break;
+			case 5:
+				if(filename.contains("ch4f"))
+					correct++;
+				else
+					wrong++;
+				break;
+			case 6:
+				if(filename.contains("cheyer"))
+					correct++;
+				else
+					wrong++;
+				break;
+			case 7:
+				if(filename.contains("choon"))
+					correct++;
+				else
+					wrong++;
+				break;
+			case 8:
+				if(filename.contains("danieln"))
+					correct++;
+				else
+					wrong++;
+				break;
+			case 9:
+				if(filename.contains("glickman"))
+					correct++;
+				else
+					wrong++;
+				break;
+			case 10:
+				if(filename.contains("karyadi"))
+					correct++;
+				else
+					wrong++;
+				break;
+			case 11:
+				if(filename.contains("kawamura"))
+					correct++;
+				else
+					wrong++;
+				break;
+			case 12:
+				if(filename.contains("kk49"))
+					correct++;
+				else
+					wrong++;
+				break;
+			case 13:
+				if(filename.contains("megak"))
+					correct++;
+				else
+					wrong++;
+				break;
+			case 14:
+				if(filename.contains("mitchell"))
+					correct++;
+				else
+					wrong++;
+				break;
+			case 15:
+				if(filename.contains("night"))
+					correct++;
+				else
+					wrong++;
+				break;
+			case 16:
+				if(filename.contains("phoebe"))
+					correct++;
+				else
+					wrong++;
+				break;
+			case 17:
+				if(filename.contains("saavik"))
+					correct++;
+				else
+					wrong++;
+				break;
+			case 18:
+				if(filename.contains("steffi"))
+					correct++;
+				else
+					wrong++;
+				break;
+			case 19:
+				if(filename.contains("sz24"))
+					correct++;
+				else
+					wrong++;
+				break;
+			case 20:
+				if(filename.contains("tammo"))
+					correct++;
+				else
+					wrong++;
+				break;
+			default:
+				break;
+			}
+			break;
+		case 3:
+			if(prediction == 1)
+			{
+				if(filename.contains("straight"))
+					correct++;
+				else
+					wrong++;
+			}else if(prediction == 2){
+				if(filename.contains("right"))
+					correct++;
+				else
+					wrong++;
+			}else if(prediction == 3){
+				if(filename.contains("left"))
+					correct++;
+				else
+					wrong++;
+			}
+			else{
+				if(filename.contains("up"))
+					correct++;
+				else
+					wrong++;
+			}
+			break;
+		}
+	}
+}

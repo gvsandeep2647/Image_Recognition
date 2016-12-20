@@ -1,0 +1,11 @@
+package artificialneuralnetworks;
+
+public class Validation {
+	/** Number of predictions we got right*/
+	int correct = 0;
+	/** Number of predictions we got wrong*/
+	int wrong = 0;
+	/** Our prediction */
+	int prediction = 0;
+
+}

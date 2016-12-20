@@ -1,0 +1,62 @@
+package artificialneuralnetworks;
+
+import java.io.*;
+import java.util.*;
+
+<<<<<<< HEAD
+
+public class PGMReader {
+	/**
+	 * @param filename
+	 * @return a double array with normalized floating point values between 0 and 1
+=======
+/**
+ * @author snehal, sandeep
+ * Provides a way to read PGM files. 
+ */
+public class PGMReader {
+	
+	/**
+	 * @param filename : Name of the PGM file to be parsed.
+	 * @return a 2D double array where each double has the gray-scale value (normalised) of the pixel and size of array being 
+	 * 			equal to the size of the image in the PGM file. 
+>>>>>>> 8c0ccb0d5913c51fc2e52e26f7542ef3d9b6b923
+	 * @throws IOException
+	 */
+	double[][] readImage(String filename) throws IOException {
+		BufferedReader br = new BufferedReader(new FileReader(filename));
+		String magic = br.readLine();
+		String size = br.readLine();
+		while(size.startsWith("#")){
+			size = br.readLine();
+		}
+		Scanner s = new Scanner(size);
+		int columns = s.nextInt();
+		int rows = s.nextInt();
+		s.close();
+		String line = br.readLine();
+		s = new Scanner(line);
+		int max = s.nextInt();
+		double image[][] = new double[rows][columns];
+		if("P5".equals(magic)){
+			FileInputStream img = new FileInputStream(filename);
+			File forLength = new File(filename);
+			long length = forLength.length();
+			long skip = length - rows*columns;
+			img.skip(skip);
+			for(int i=0;i<rows;i++){
+				for(int j=0;j<columns;j++){
+					image[i][j] = (double)img.read()/255.0;
+				}
+			}
+			//System.out.println(rows+" "+columns);
+		}
+		else{
+			//include P2 ? (checked 2 images, they're P5)
+		}
+		s.close();
+		br.close();
+		
+		return image;
+	}
+}

@@ -1,0 +1,94 @@
+package artificialneuralnetworks;
+
+public class FaceRecognizer {
+	int correct = 0;
+	int wrong = 0;
+	int prediction = 0;
+
+	
+	public void updateResults(int prediction,String filename){
+		switch (prediction) {
+		case 1:
+			if(filename.contains("an2i"))
+				correct++;
+			else
+				wrong++;
+			break;
+		case 2:
+			if(filename.contains("at33"))
+				correct++;
+			else
+				wrong++;
+			break;
+		case 3:
+			if(filename.contains("boland"))
+				correct++;
+			else
+				wrong++;
+			break;
+		case 4:
+			if(filename.contains("bpm"))
+				correct++;
+			else
+				wrong++;
+			break;
+		case 5:
+			if(filename.contains("ch4f"))
+				correct++;
+			else
+				wrong++;
+			break;
+		case 6:
+			if(filename.contains("cheyer"))
+				correct++;
+			else
+				wrong++;
+			break;
+		case 7:
+			if(filename.contains("choon"))
+				correct++;
+			else
+				wrong++;
+			break;
+		case 8:
+			if(filename.contains("an2i"))
+				correct++;
+			else
+				wrong++;
+			break;
+		case 1:
+			if(filename.contains("an2i"))
+				correct++;
+			else
+				wrong++;
+			break;
+		case 1:
+			if(filename.contains("an2i"))
+				correct++;
+			else
+				wrong++;
+			break;
+		case 1:
+			if(filename.contains("an2i"))
+				correct++;
+			else
+				wrong++;
+			break;
+		case 1:
+			if(filename.contains("an2i"))
+				correct++;
+			else
+				wrong++;
+			break;
+		case 1:
+			if(filename.contains("an2i"))
+				correct++;
+			else
+				wrong++;
+			break;
+
+		default:
+			break;
+		}
+	}
+}

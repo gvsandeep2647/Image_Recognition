@@ -1,0 +1,48 @@
+package artificialneuralnetworks;
+
+public class Validation {
+	/** Number of predictions we got right*/
+	int correct = 0;
+	/** Number of predictions we got wrong*/
+	int wrong = 0;
+	/** Our prediction */
+	int prediction = 0;
+	
+	/**
+	 * @param prediction : Our prediction
+	 * @param filename : The image on which we are predicting
+	 * @param mode : 1. Sunglasses 2. Face Recognizer 3. Pose Recognizer
+	 */
+	public void updateResults(int prediction,String filename,int mode){
+		ANN.initializeHashMaps();
+		switch (mode){
+		case 1:
+			if(prediction == 1)
+			{
+				if(filename.contains("sunglasses"))
+					correct++;
+				else
+					wrong++;
+			}
+			else{
+				if(filename.contains("open"))
+					correct++;
+				else
+					wrong++;
+			}
+			break;
+		case 2:
+			if(filename.contains(ANN.faceID.get(prediction)))
+				correct++;
+			else
+				wrong++;
+			break;
+		case 3:
+			if(filename.contains(ANN.directionID.get(prediction)))
+				correct++;
+			else
+				wrong++;
+			break;
+		}
+	}
+}
